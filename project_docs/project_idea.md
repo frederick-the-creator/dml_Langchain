@@ -1,0 +1,2 @@
+I've created a basic flow in this jupyter notebook that takes some text files as input and outputs a dataframe df with themes identified in the text files and the associated quotes from the text files. 
+This is going to form the basis for an app that I will develop. The app will allow a user to upload files to a UI which will then be analysed using the LLM workflow in workspace.ipynb to identify the themes. These will then be output to the UI for the user to review. 
