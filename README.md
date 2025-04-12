@@ -28,6 +28,6 @@ The application processes uploaded text files and extracts themes along with ass
 
 To run the application with Streamlit, use:
 ```bash
-streamlit run app.py
+streamlit run src/app.py
 ```
 *(Note: Replace `app.py` with the main entry point of your application if named differently.)*
