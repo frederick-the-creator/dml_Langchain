@@ -3,11 +3,19 @@ import time
 def read_file(uploaded_file):
     """
     Reads the content of an uploaded file as text (UTF-8).
-    Returns the text content or raises an exception if decoding fails.
+    Returns the text content.
+    Raises a ValueError if:
+     - The file is empty or contains only whitespace.
+     - Decoding fails due to unsupported encoding.
     """
     try:
         file_bytes = uploaded_file.read()
-        return file_bytes.decode('utf-8')
+        text = file_bytes.decode('utf-8')
+        if not text.strip():
+            raise ValueError(f"File '{uploaded_file.name}' is empty or contains only whitespace.")
+        return text
+    except UnicodeDecodeError as e:
+        raise ValueError(f"Unsupported encoding in {uploaded_file.name}: {str(e)}")
     except Exception as e:
         raise ValueError(f"Error reading {uploaded_file.name}: {str(e)}")
 
