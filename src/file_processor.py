@@ -11,14 +11,32 @@ def read_file(uploaded_file):
     except Exception as e:
         raise ValueError(f"Error reading {uploaded_file.name}: {str(e)}")
 
+def chunk_text(text, lines_per_chunk=10):
+    """
+    Splits the text into chunks, each containing up to 'lines_per_chunk' lines.
+    This is based on the chunking logic from the workspace notebook.
+    """
+    lines = text.splitlines()
+    chunks = []
+    for i in range(0, len(lines), lines_per_chunk):
+        chunk = "\n".join(lines[i:i+lines_per_chunk]).strip()
+        if chunk:
+            chunks.append(chunk)
+    return chunks
+
 def process_file(file_content):
     """
-    Placeholder function to process file content for theme analysis.
-    In the future, this will integrate with LangChain for analysis.
-    For now, it simulates processing with a sleep.
+    Processes file content for theme analysis by chunking the text
+    and simulating LLM processing on each chunk.
     """
-    # Simulate processing time with a progress loop
-    for _ in range(100):
-        time.sleep(0.01)
-    # Return a dummy processed result
-    return {"themes": ["theme1", "theme2"], "quotes": ["quote1", "quote2"]}
+    chunks = chunk_text(file_content, lines_per_chunk=10)
+    aggregated_themes = []
+    aggregated_quotes = []
+    for chunk in chunks:
+        # Simulate processing time for each chunk
+        for _ in range(10):
+            time.sleep(0.005)
+        # Dummy extraction: for demonstration, assign a fixed theme and use a portion of the chunk as a sample quote.
+        aggregated_themes.append("dummy_theme")
+        aggregated_quotes.append(chunk[:50])
+    return {"themes": aggregated_themes, "quotes": aggregated_quotes}
