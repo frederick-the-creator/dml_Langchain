@@ -18,7 +18,23 @@ def main():
                 st.write(uploaded_file.name)
             st.success("Files uploaded successfully")
             if st.button("Process Files"):
-                st.info("Processing will be implemented in future stories")
+                import src.file_processor as fp
+                results = []
+                total_files = len(valid_files)
+                progress_bar = st.progress(0)
+                for idx, uploaded_file in enumerate(valid_files):
+                    try:
+                        content = fp.read_file(uploaded_file)
+                        result = fp.process_file(content)
+                        results.append((uploaded_file.name, result))
+                    except Exception as e:
+                        st.error(f"Error processing {uploaded_file.name}: {e}")
+                    progress_bar.progress((idx+1)/total_files)
+                st.success("Processing complete")
+                for file_name, result in results:
+                    st.write(f"File: {file_name}")
+                    st.write("Themes:", result.get("themes", []))
+                    st.write("Quotes:", result.get("quotes", []))
     
     st.write("Identified Themes will appear here.")
 
