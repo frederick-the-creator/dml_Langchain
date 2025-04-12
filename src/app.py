@@ -35,6 +35,12 @@ def main():
                     st.write(f"File: {file_name}")
                     st.write("Themes:", result.get("themes", []))
                     st.write("Quotes:", result.get("quotes", []))
+                from src.data_model import aggregate_results
+                import pandas as pd
+                aggregated_data = aggregate_results(results)
+                df = pd.DataFrame([data.dict() for data in aggregated_data])
+                st.write("Aggregated Results:")
+                st.dataframe(df)
     
     st.write("Identified Themes will appear here.")
 
