@@ -1,0 +1,9 @@
+requirements.md project_idea.md bom.json app.py __init__.py requirements.txt workspace.ipynb  
+
+Use the information from the project's requirements, along with the existing app structure and logic developed in the jupyter notebook to generate a set of user stories for requirement 2
+
+Be sure to include all the information a developer would need in order to satisfy the stories acceptance criteria and adhere to the chose architecture and tech stack, without having to go back and review the requirements, architecture or tech stack. 
+
+Include relevant details in tickets of any design decisions - such as technologies and versions, names and roles of components, etc. - we’ve made in the proposed solution that could help guide the ticket implementor in developing an app that’s in alignment with our chosen design.
+
+Format your output in raw markdown.
