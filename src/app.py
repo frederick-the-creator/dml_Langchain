@@ -9,6 +9,9 @@ def main():
         st.write("Uploaded files:")
         for uploaded_file in uploaded_files:
             st.write(uploaded_file.name)
+        st.success("Files uploaded successfully")
+        if st.button("Process Files"):
+            st.info("Processing will be implemented in future stories")
     
     st.write("Identified Themes will appear here.")
 
