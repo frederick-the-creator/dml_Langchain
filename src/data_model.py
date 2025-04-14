@@ -1,15 +1,8 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
+from src.utils import load_codebook
 
-import os
-import json
-# Load the codebook for enum restriction.
-CODEBOOK_PATH = os.path.join(os.path.dirname(__file__), "codebook.json")
-try:
-    with open(CODEBOOK_PATH, "r", encoding="utf-8") as f:
-        CODEBOOK = json.load(f)
-except Exception as e:
-    raise ValueError(f"Failed to load codebook from {CODEBOOK_PATH}: {str(e)}")
+CODEBOOK = load_codebook()
 
 class Theme(BaseModel):
     """
