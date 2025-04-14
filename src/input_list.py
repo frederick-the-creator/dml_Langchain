@@ -76,11 +76,12 @@ examples = [
 def create_input_list(chunks: List[str], examples: List[dict]) -> List[Dict[str, any]]:
     """
     Creates the input list for the LangChain runnable by attaching processed reference examples
-    to each provided text chunk.
+    (provided as a list) to each provided text chunk.
 
     Args:
         chunks (List[str]): A list of text chunks.
-        examples_path (str): Path to the JSON file containing reference examples.
+        examples (List[dict]): A list of reference examples, each represented as a tuple
+            containing the full example text and a Data instance with themes and quotes.
 
     Returns:
         List[Dict[str, any]]: A list of dictionaries where each dictionary has:
