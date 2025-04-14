@@ -15,7 +15,7 @@ class Theme(BaseModel):
     theme: Optional[str] = Field(
         default=None,
         description="Name of the theme identified",
-        enum=CODEBOOK
+        enum=codebook
     )
     matching_quotes: Optional[str] = Field(
         default=None,
