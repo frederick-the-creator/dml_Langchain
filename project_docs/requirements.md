@@ -13,7 +13,7 @@
 
 ## 3. Theme Analysis
 3.1. The application shall use LangChain and LLM to identify themes in the uploaded text and extract relevant quotes that support each identified theme using the workflow in the provided Jupyter notebook (workspace.ipynb).
-3.2. The analysis shall organize themes and quotes in a structured format (similar to the dataframe in your notebook)
+3.2. The analysis output shall organize themes and quotes in a structured format the same as Jupyter notebook (workspace.ipynb).
 
 ## 4. Data Management
 4.1. The application shall temporarily store uploaded files for processing
