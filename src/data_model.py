@@ -1,8 +1,8 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
-from src.utils import load_codebook
+from src.utils import load_json_data
 
-codebook = load_codebook()
+codebook = load_json_data()
 
 class Theme(BaseModel):
     """
