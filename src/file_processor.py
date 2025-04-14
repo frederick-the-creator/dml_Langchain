@@ -54,6 +54,7 @@ def process_file(file_content):
     chunks = chunk_text(file_content, lines_per_chunk=10)
     
     # 2. Initialize the LLM using our error-handled utility function.
+    from src.utils import init_llm
     llm = init_llm()
     
     # 3. Import the prompt template.
