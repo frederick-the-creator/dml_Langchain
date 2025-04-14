@@ -1,20 +1,11 @@
 from typing import List, Dict
 from src.file_processor import chunk_text
 from src.utils import load_json_data
+from langchain_core.utils.function_calling import tool_example_to_messages
 
 
-def tool_example_to_messages(examples: List[dict]) -> List[dict]:
-    """
-    Placeholder function to convert examples into the message format expected 
-    by the LangChain runnable. For now, it performs an identity transformation.
+def retrieve_reference_examles()
 
-    Args:
-        examples (List[dict]): Raw example data.
-
-    Returns:
-        List[dict]: Processed example messages.
-    """
-    return examples
 
 def create_input_list(file_content: str, examples_path: str, lines_per_chunk: int = 10) -> List[Dict[str, any]]:
     """
