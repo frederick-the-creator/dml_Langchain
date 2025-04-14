@@ -71,7 +71,7 @@ def process_file(file_content):
     
     # 3. Import the prompt template.
     try:
-        from prompts import prompt_template
+        from src.prompts import prompt_template
     except ImportError:
         raise ImportError("Could not import prompt_template from prompts.py. Please ensure it exists and is correct.")
     
