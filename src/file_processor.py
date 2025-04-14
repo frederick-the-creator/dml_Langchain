@@ -1,5 +1,8 @@
 import time
 from langchain.chat_models import init_chat_model
+from src.utils import init_llm
+from src.prompts import prompt_template
+from src.data_model import Data
 
 def read_file(uploaded_file):
     """
@@ -54,21 +57,15 @@ def process_file(file_content):
     chunks = chunk_text(file_content, lines_per_chunk=10)
     
     # 2. Initialize the LLM using our error-handled utility function.
-    from src.utils import init_llm
     llm = init_llm()
     
-    # 3. Import the prompt template.
-    try:
-        from src.prompts import prompt_template
-    except ImportError:
-        raise ImportError("Could not import prompt_template from prompts.py. Please ensure it exists and is correct.")
+    # 3. The prompt_template was imported at the module level.
     
     # 4. Build the input_list for batch processing.
     input_list = [{"text": chunk, "examples": []} for chunk in chunks]
     
     try:
         # 5. Configure the LangChain runnable.
-        from data_model import Data  # Ensure this path is correct.
         runnable = prompt_template | llm.with_structured_output(
             schema=Data,
             method="function_calling",
