@@ -4,7 +4,6 @@ from src.utils import load_json_data
 from langchain_core.utils.function_calling import tool_example_to_messages
 
 
-def retrieve_reference_examles()
 
 
 def create_input_list(chunks: List[str], examples_path: str) -> List[Dict[str, any]]:
