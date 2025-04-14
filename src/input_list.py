@@ -88,6 +88,7 @@ def create_input_list(chunks: List[str], examples: List[dict]) -> List[Dict[str,
             - "examples": The processed reference examples.
     """
 
+    global examples
     messages = []
 
     for text, tool_call in examples:
