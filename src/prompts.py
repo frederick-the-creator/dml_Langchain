@@ -1,14 +1,7 @@
-import os
-import json
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from src.utils import load_codebook
 
-CODEBOOK_PATH = os.path.join(os.path.dirname(__file__), "codebook.json")
-
-try:
-    with open(CODEBOOK_PATH, "r", encoding="utf-8") as f:
-        codebook = json.load(f)
-except Exception as e:
-    raise ValueError(f"Failed to load codebook from {CODEBOOK_PATH}: {str(e)}")
+codebook = load_codebook()
 
 # Build the prompt template.
 # The system message now includes detailed instructions and dynamically inserts the codebook list.
