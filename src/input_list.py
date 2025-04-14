@@ -6,7 +6,7 @@ from langchain_core.utils.function_calling import tool_example_to_messages
 
 
 
-def create_input_list(chunks: List[str], examples_path: str) -> List[Dict[str, any]]:
+def create_input_list(chunks: List[str], examples: List[dict]) -> List[Dict[str, any]]:
     """
     Creates the input list for the LangChain runnable by attaching processed reference examples
     to each provided text chunk.
@@ -20,7 +20,6 @@ def create_input_list(chunks: List[str], examples_path: str) -> List[Dict[str, a
             - "text": A text chunk.
             - "examples": The processed reference examples.
     """
-    raw_examples = load_json_data(examples_path)
-    processed_examples = tool_example_to_messages(raw_examples)
+    processed_examples = tool_example_to_messages(examples)
     input_list = [{"text": chunk, "examples": processed_examples} for chunk in chunks]
     return input_list
