@@ -1,5 +1,14 @@
 import streamlit as st
 
+                                                                                                                                                           
+import sys                                                                                                                                              
+import os                                                                                                                                               
+                                                                                                                                                        
+# Add the project root directory to the Python path                                                                                                     
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                                                                           
+if project_root not in sys.path:                                                                                                                        
+    sys.path.insert(0, project_root)
+       
 def main():
     st.title("Theme Extraction Application")
     st.write("Welcome to the Theme Extraction Application! This application extracts themes from uploaded text files using LangChain and OpenAI.")
@@ -39,7 +48,7 @@ def main():
                 from src.data_model import aggregate_results
                 import pandas as pd
                 aggregated_data = aggregate_results(results)
-                df = pd.DataFrame([data.dict() for data in aggregated_data])
+                df = pd.DataFrame([data.model_dump() for data in aggregated_data])
                 st.write("Aggregated Results:")
                 st.dataframe(df)
     
