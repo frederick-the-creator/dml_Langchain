@@ -33,19 +33,6 @@ def chunk_text(text, lines_per_chunk=10):
             chunks.append(chunk)
     return chunks
 
-def init_llm():
-    """
-    Initializes and returns the LangChain LLM using the provided
-    model identifier and model_provider.
-    
-    Raises:
-        ValueError: If the LLM initialization fails.
-    """
-    try:
-        llm = init_chat_model("gpt-4o-mini", model_provider="openai")
-        return llm
-    except Exception as e:
-        raise ValueError(f"Failed to initialize the LangChain LLM: {str(e)}")
 
 def process_file(file_content):
     """
