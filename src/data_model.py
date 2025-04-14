@@ -2,7 +2,7 @@ from typing import Optional, List
 from pydantic import BaseModel, Field
 from src.utils import load_codebook
 
-CODEBOOK = load_codebook()
+codebook = load_codebook()
 
 class Theme(BaseModel):
     """
