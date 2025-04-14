@@ -8,6 +8,10 @@ import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                                                                           
 if project_root not in sys.path:                                                                                                                        
     sys.path.insert(0, project_root)
+
+import src.file_processor as fp
+from src.data_model import aggregate_results
+import pandas as pd
        
 def main():
     st.title("Theme Extraction Application")
@@ -28,7 +32,6 @@ def main():
             st.success("Files uploaded successfully")
             if st.button("Process Files"):
                 with st.spinner("Processing files..."):
-                    import src.file_processor as fp
                     results = []
                     total_files = len(valid_files)
                     progress_bar = st.progress(0)
@@ -45,8 +48,6 @@ def main():
                     st.write(f"File: {file_name}")
                     st.write("Themes:", result.get("themes", []))
                     st.write("Quotes:", result.get("quotes", []))
-                from src.data_model import aggregate_results
-                import pandas as pd
                 aggregated_data = aggregate_results(results)
                 df = pd.DataFrame([data.model_dump() for data in aggregated_data])
                 st.write("Aggregated Results:")
