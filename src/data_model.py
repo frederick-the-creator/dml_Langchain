@@ -1,5 +1,42 @@
-from typing import List
-from pydantic import BaseModel
+from typing import Optional, List
+from pydantic import BaseModel, Field
+
+import os
+import json
+# Load the codebook for enum restriction.
+CODEBOOK_PATH = os.path.join(os.path.dirname(__file__), "codebook.json")
+try:
+    with open(CODEBOOK_PATH, "r", encoding="utf-8") as f:
+        CODEBOOK = json.load(f)
+except Exception as e:
+    raise ValueError(f"Failed to load codebook from {CODEBOOK_PATH}: {str(e)}")
+
+class Theme(BaseModel):
+    """
+    Pydantic model representing a theme identified in the text.
+
+    Attributes:
+      theme: The name of the theme, restricted to the allowed values from the codebook.
+      matching_quotes: Aggregated quotes supporting this theme, each separated by a newline.
+    """
+    theme: Optional[str] = Field(
+        default=None,
+        description="Name of the theme identified",
+        enum=CODEBOOK
+    )
+    matching_quotes: Optional[str] = Field(
+        default=None,
+        description="All quotes from the text that match the identified theme, each on a new line."
+    )
+
+class Data(BaseModel):
+    """
+    Pydantic model for encapsulating extracted themes data from text.
+
+    Attributes:
+      themes: A list of Theme instances representing the themes extracted from the text.
+    """
+    themes: List[Theme]
 
 class FileThemeData(BaseModel):
     """
