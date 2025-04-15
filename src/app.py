@@ -1,8 +1,6 @@
 import streamlit as st                                                                                                                                               
 import sys                                                                                                                                              
-import os          
-import src.file_processor as fp
-from src.data_model import aggregate_results
+import os         
 import pandas as pd                                                                                                                                     
                                                                                                                                                         
 # Add the project root directory to the Python path                                                                                                     
@@ -10,6 +8,9 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:                                                                                                                        
     sys.path.insert(0, project_root)
 
+import src.file_processor as fp
+from src.data_model import aggregate_results
+from src.output import create_themes_dataframe, reduce_matching_quotes, display_multiline_table
 
 def main():
     st.title("Theme Extraction Application")
@@ -42,9 +43,12 @@ def main():
                             st.error(f"Error processing {uploaded_file.name}: {e}")
                         progress_bar.progress((idx+1)/total_files)
                 st.success("Processing complete")
-                aggregated_df = fp.create_themes_dataframe(results)
+                aggregated_df = create_themes_dataframe(results)
+                reduced_df = reduce_matching_quotes(aggregated_df, 3)
+                pretty_df = display_multiline_table(reduced_df)
+
                 st.write("Aggregated Results:")
-                st.dataframe(aggregated_df)
+                st.dataframe(reduced_df)
     
     st.write("Identified Themes will appear here.")
 

@@ -2,7 +2,7 @@ from typing import Optional, List
 from pydantic import BaseModel, Field
 from src.utils import load_json_data
 
-codebook = load_json_data()
+codebook = load_json_data("src/codebook.json")
 
 class Theme(BaseModel):
     """

@@ -3,6 +3,8 @@ from langchain.chat_models import init_chat_model
 from src.utils import init_llm
 from src.prompts import prompt_template
 from src.data_model import Data
+from src.input import create_input_list
+
 
 def read_file(uploaded_file):
     """
@@ -59,10 +61,8 @@ def process_file(file_content):
     # 2. Initialize the LLM using our error-handled utility function.
     llm = init_llm()
     
-    # 3. The prompt_template was imported at the module level.
-    
     # 4. Build the input_list for batch processing.
-    input_list = [{"text": chunk, "examples": []} for chunk in chunks]
+    input_list = create_input_list(chunks)
     
     try:
         # 5. Configure the LangChain runnable.
@@ -74,14 +74,7 @@ def process_file(file_content):
         
         # 6. Process the input list using batch mode.
         responses = runnable.batch(input_list)
-        
-        # 7. Aggregate the outputs.
-        aggregated_themes = []
-        aggregated_quotes = []
-        for response in responses:
-            aggregated_themes.extend(response.get("themes", []))
-            aggregated_quotes.extend(response.get("quotes", []))
-            
-        return {"themes": aggregated_themes, "quotes": aggregated_quotes}
+
+        return responses
     except Exception as e:
         raise ValueError(f"Error processing file content: {str(e)}")

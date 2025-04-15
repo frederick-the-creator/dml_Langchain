@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from src.utils import load_json_data
 
-codebook = load_json_data()
+codebook = load_json_data("src/codebook.json")
 
 # Build the prompt template.
 # The system message now includes detailed instructions and dynamically inserts the codebook list.

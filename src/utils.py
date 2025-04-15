@@ -16,8 +16,7 @@ def load_json_data(filepath: str = None):
     Raises:
         ValueError: If the file cannot be loaded.
     """
-    if filepath is None:
-        filepath = os.path.join(os.path.dirname(__file__), "codebook.json")
+
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)

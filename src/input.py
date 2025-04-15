@@ -1,5 +1,4 @@
 from typing import List, Dict
-from src.file_processor import chunk_text
 from src.utils import load_json_data
 from langchain_core.utils.function_calling import tool_example_to_messages
 from src.data_model import Data, Theme
@@ -68,9 +67,6 @@ examples = [
     #     Data(themes=[]),
     # )
 ]
-
-
-
 
 
 
