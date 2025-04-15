@@ -1,47 +1,38 @@
 
 import pandas as pd
 
-def create_themes_dataframe(responses):
-    
+def create_themes_dataframe(results):
     """
-    Given a list of response dictionaries, each containing a 'themes' list,
-    produce a Pandas DataFrame with two columns:
+    Given a list of tuples (file_name, responses), where responses is a list of response dicts,
+    each containing a 'themes' list, produce a Pandas DataFrame with columns:
       - 'Theme'
       - 'Matching Quotes'
+      - 'Frequency'
 
     Args:
-        responses (list): A list of dictionaries or Pydantic-like objects
-                          each containing a 'themes' key.
+        results (list): List of tuples (file_name, responses), where responses is a list of dicts.
 
     Returns:
-        pd.DataFrame: A DataFrame with all themes and matching quotes
-                      aggregated across all responses.
+        pd.DataFrame: Aggregated DataFrame of themes and matching quotes across all files.
     """
-    
-    # In case each response is still a pydantic model, convert to dict
-    # You can skip this step if your responses are already dictionaries.
-    responses = [resp.model_dump() if hasattr(resp, "model_dump") else resp for resp in responses]
-    
-    # 1. Collect rows from each response
     rows = []
-    for response in responses:
-        # If responses are Pydantic models, convert them with model_dump() if needed.
-        theme_items = response.get("themes", [])
-        for t in theme_items:
-            rows.append({
-                "Theme": t["theme"],
-                "Matching Quotes": t["matching_quotes"]
-            })
-    
-    # 2. Create a DataFrame from the collected rows
+    for file_name, responses in results:
+        for response in responses:
+            # Convert pydantic model to dict if needed
+            if hasattr(response, "model_dump"):
+                response = response.model_dump()
+            theme_items = response.get("themes", [])
+            for t in theme_items:
+                rows.append({
+                    "Theme": t["theme"],
+                    "Matching Quotes": t["matching_quotes"]
+                })
+
     df = pd.DataFrame(rows)
-    
-    # 3. Group by "Theme" and aggregate the matching quotes.
+
     grouped_data = []
     for theme, group in df.groupby("Theme"):
-        # Join all matching quotes for the theme into one string (each separated by a newline)
         all_quotes = "\n".join(group["Matching Quotes"].tolist())
-        # Split into individual quotes, strip whitespace, and ignore empty entries.
         quotes_list = [quote.strip() for quote in all_quotes.split("\n") if quote.strip()]
         count = len(quotes_list)
         grouped_data.append({
@@ -49,10 +40,8 @@ def create_themes_dataframe(responses):
             "Matching Quotes": all_quotes,
             "Frequency": count
         })
-    
-    # 4. Convert the grouped data into a DataFrame.
-    df_merged = pd.DataFrame(grouped_data, columns=["Theme", "Matching Quotes", "Frequency"])
 
+    df_merged = pd.DataFrame(grouped_data, columns=["Theme", "Matching Quotes", "Frequency"])
     df_merged = df_merged.sort_values('Frequency', ascending=False)
 
     return df_merged

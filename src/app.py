@@ -42,14 +42,9 @@ def main():
                             st.error(f"Error processing {uploaded_file.name}: {e}")
                         progress_bar.progress((idx+1)/total_files)
                 st.success("Processing complete")
-                for file_name, result in results:
-                    st.write(f"File: {file_name}")
-                    st.write("Themes:", result.get("themes", []))
-                    st.write("Quotes:", result.get("quotes", []))
-                aggregated_data = aggregate_results(results)
-                df = pd.DataFrame([data.model_dump() for data in aggregated_data])
+                aggregated_df = fp.create_themes_dataframe(results)
                 st.write("Aggregated Results:")
-                st.dataframe(df)
+                st.dataframe(aggregated_df)
     
     st.write("Identified Themes will appear here.")
 
