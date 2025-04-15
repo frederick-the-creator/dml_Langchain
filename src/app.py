@@ -1,14 +1,17 @@
-import streamlit as st
-
-                                                                                                                                                           
+import streamlit as st                                                                                                                                               
 import sys                                                                                                                                              
-import os                                                                                                                                               
+import os         
+import pandas as pd                                                                                                                                     
                                                                                                                                                         
 # Add the project root directory to the Python path                                                                                                     
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                                                                           
 if project_root not in sys.path:                                                                                                                        
     sys.path.insert(0, project_root)
-       
+
+import src.file_processor as fp
+from src.data_model import aggregate_results
+from src.output import create_themes_dataframe, reduce_matching_quotes, display_multiline_table
+
 def main():
     st.title("Theme Extraction Application")
     st.write("Welcome to the Theme Extraction Application! This application extracts themes from uploaded text files using LangChain and OpenAI.")
@@ -28,7 +31,6 @@ def main():
             st.success("Files uploaded successfully")
             if st.button("Process Files"):
                 with st.spinner("Processing files..."):
-                    import src.file_processor as fp
                     results = []
                     total_files = len(valid_files)
                     progress_bar = st.progress(0)
@@ -41,16 +43,12 @@ def main():
                             st.error(f"Error processing {uploaded_file.name}: {e}")
                         progress_bar.progress((idx+1)/total_files)
                 st.success("Processing complete")
-                for file_name, result in results:
-                    st.write(f"File: {file_name}")
-                    st.write("Themes:", result.get("themes", []))
-                    st.write("Quotes:", result.get("quotes", []))
-                from src.data_model import aggregate_results
-                import pandas as pd
-                aggregated_data = aggregate_results(results)
-                df = pd.DataFrame([data.model_dump() for data in aggregated_data])
+                aggregated_df = create_themes_dataframe(results)
+                reduced_df = reduce_matching_quotes(aggregated_df, 3)
+                pretty_df = display_multiline_table(reduced_df)
+
                 st.write("Aggregated Results:")
-                st.dataframe(df)
+                st.dataframe(reduced_df)
     
     st.write("Identified Themes will appear here.")
 

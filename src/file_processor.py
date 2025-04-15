@@ -1,4 +1,10 @@
 import time
+from langchain.chat_models import init_chat_model
+from src.utils import init_llm
+from src.prompts import prompt_template
+from src.data_model import Data
+from src.input import create_input_list
+
 
 def read_file(uploaded_file):
     """
@@ -32,19 +38,43 @@ def chunk_text(text, lines_per_chunk=10):
             chunks.append(chunk)
     return chunks
 
+
 def process_file(file_content):
     """
-    Processes file content for theme analysis by chunking the text
-    and simulating LLM processing on each chunk.
+    Processes file content for theme analysis by splitting the text into chunks,
+    running them through a LangChain runnable, and aggregating the results.
+    
+    This implementation now:
+      - Configures the prompt template with a structured output schema.
+      - Initializes the LangChain model with error-handled API calls.
+      - Processes text chunks in batches for API optimization.
+    
+    Returns:
+        dict: A dictionary with keys "themes" and "quotes" as extracted by the LLM.
+    
+    Raises:
+        ValueError: If an error occurs during processing.
     """
+    # 1. Split text into manageable chunks.
     chunks = chunk_text(file_content, lines_per_chunk=10)
-    aggregated_themes = []
-    aggregated_quotes = []
-    for chunk in chunks:
-        # Simulate processing time for each chunk
-        for _ in range(10):
-            time.sleep(0.005)
-        # Dummy extraction: for demonstration, assign a fixed theme and use a portion of the chunk as a sample quote.
-        aggregated_themes.append("dummy_theme")
-        aggregated_quotes.append(chunk[:50])
-    return {"themes": aggregated_themes, "quotes": aggregated_quotes}
+    
+    # 2. Initialize the LLM using our error-handled utility function.
+    llm = init_llm()
+    
+    # 4. Build the input_list for batch processing.
+    input_list = create_input_list(chunks)
+    
+    try:
+        # 5. Configure the LangChain runnable.
+        runnable = prompt_template | llm.with_structured_output(
+            schema=Data,
+            method="function_calling",
+            include_raw=False
+        )
+        
+        # 6. Process the input list using batch mode.
+        responses = runnable.batch(input_list)
+
+        return responses
+    except Exception as e:
+        raise ValueError(f"Error processing file content: {str(e)}")
