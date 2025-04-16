@@ -4,26 +4,47 @@ from src.utils import init_llm
 from src.prompts import prompt_template
 from src.data_model import Data
 from src.input import create_input_list
+from langchain.document_loaders import PyPDFLoader
+import os
 
 
 def read_file(uploaded_file):
     """
-    Reads the content of an uploaded file as text (UTF-8).
+    Reads the content of an uploaded file as text (UTF-8) or PDF.
     Returns the text content.
     Raises a ValueError if:
      - The file is empty or contains only whitespace.
      - Decoding fails due to unsupported encoding.
+     - PDF extraction fails or file is not a valid PDF.
     """
+    filename = getattr(uploaded_file, 'name', '')
+    ext = os.path.splitext(filename)[1].lower()
     try:
-        file_bytes = uploaded_file.read()
-        text = file_bytes.decode('utf-8')
-        if not text.strip():
-            raise ValueError(f"File '{uploaded_file.name}' is empty or contains only whitespace.")
-        return text
+        if ext == '.pdf':
+            # Save PDF to a temporary file for LangChain loader
+            import tempfile
+            with tempfile.NamedTemporaryFile(delete=True, suffix='.pdf') as tmp:
+                tmp.write(uploaded_file.read())
+                tmp.flush()
+                try:
+                    loader = PyPDFLoader(tmp.name)
+                    docs = loader.load()
+                    text = "\n".join([doc.page_content for doc in docs])
+                except Exception as e:
+                    raise ValueError(f"Error reading PDF {filename}: {str(e)}")
+            if not text.strip():
+                raise ValueError(f"PDF '{filename}' is empty or contains only whitespace.")
+            return text
+        else:
+            file_bytes = uploaded_file.read()
+            text = file_bytes.decode('utf-8')
+            if not text.strip():
+                raise ValueError(f"File '{filename}' is empty or contains only whitespace.")
+            return text
     except UnicodeDecodeError as e:
-        raise ValueError(f"Unsupported encoding in {uploaded_file.name}: {str(e)}")
+        raise ValueError(f"Unsupported encoding in {filename}: {str(e)}")
     except Exception as e:
-        raise ValueError(f"Error reading {uploaded_file.name}: {str(e)}")
+        raise ValueError(f"Error reading {filename}: {str(e)}")
 
 def chunk_text(text, lines_per_chunk=10):
     """

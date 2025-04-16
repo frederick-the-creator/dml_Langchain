@@ -22,7 +22,11 @@ def main():
     if 'processed_results' not in st.session_state:
         st.session_state.processed_results = None
     
-    uploaded_files = st.file_uploader("Upload text files", type="txt", accept_multiple_files=True)
+    uploaded_files = st.file_uploader(
+        "Upload text, CSV, or PDF files",
+        type=["txt", "csv", "pdf"],
+        accept_multiple_files=True
+    )
     if uploaded_files:
         valid_files = []
         for uploaded_file in uploaded_files:
