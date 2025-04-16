@@ -11,10 +11,16 @@ if project_root not in sys.path:
 import src.file_processor as fp
 from src.data_model import aggregate_results
 from src.output import create_themes_dataframe, reduce_matching_quotes, display_multiline_table
+from src.csv_operations import import_themes_from_csv
+from src.state_management import save_dataframe_to_state, get_dataframe_from_state
 
 def main():
     st.title("Theme Extraction Application")
     st.write("Welcome to the Theme Extraction Application! This application extracts themes from uploaded text files using LangChain and OpenAI.")
+    
+    # Initialize session state for storing results
+    if 'processed_results' not in st.session_state:
+        st.session_state.processed_results = None
     
     uploaded_files = st.file_uploader("Upload text files", type="txt", accept_multiple_files=True)
     if uploaded_files:
@@ -45,12 +51,33 @@ def main():
                 st.success("Processing complete")
                 aggregated_df = create_themes_dataframe(results)
                 reduced_df = reduce_matching_quotes(aggregated_df, 3)
-                pretty_df = display_multiline_table(reduced_df)
+                save_dataframe_to_state(reduced_df, 'processed_results')
 
-                st.write("Aggregated Results:")
-                st.dataframe(reduced_df)
-    
-    st.write("Identified Themes will appear here.")
+    # Display processed results if they exist
+    reduced_df = get_dataframe_from_state('processed_results')
+    if reduced_df is not None:
+        st.markdown("## Theme Extracted from Raw Data", unsafe_allow_html=True)
+        st.dataframe(reduced_df)
+        
+        # Add download button for the CSV export
+        csv = reduced_df.to_csv(index=False)
+        st.download_button(
+            label="Download Themes as CSV",
+            data=csv,
+            file_name="extracted_themes.csv",
+            mime="text/csv",
+        )
+
+    # Add CSV import section
+    st.markdown("---")
+    uploaded_csv = st.file_uploader("Upload edited themes CSV", type="csv", accept_multiple_files=False)
+    if uploaded_csv is not None:
+        try:
+            imported_df = import_themes_from_csv(uploaded_csv)
+            st.markdown("## Themes Updated by User", unsafe_allow_html=True)
+            st.dataframe(imported_df)
+        except ValueError as e:
+            st.error(str(e))
 
 if __name__ == "__main__":
     main()
