@@ -1,7 +1,6 @@
 import streamlit as st                                                                                                                                               
 import sys                                                                                                                                              
-import os         
-import pandas as pd                                                                                                                                     
+import os                                                                                                                                          
                                                                                                                                                         
 # Add the project root directory to the Python path                                                                                                     
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                                                                           
@@ -27,35 +26,31 @@ def main():
         type=["txt", "csv", "pdf"],
         accept_multiple_files=True
     )
+
     if uploaded_files:
-        valid_files = []
-        for uploaded_file in uploaded_files:
-            if uploaded_file.size > 5 * 1024 * 1024:
-                st.error(f"{uploaded_file.name} exceeds the size limit of 5MB")
-            else:
-                valid_files.append(uploaded_file)
-        if valid_files:
-            st.write("Uploaded files:")
-            for uploaded_file in valid_files:
-                st.write(uploaded_file.name)
-            st.success("Files uploaded successfully")
-            if st.button("Process Files"):
-                with st.spinner("Processing files..."):
-                    results = []
-                    total_files = len(valid_files)
-                    progress_bar = st.progress(0)
-                    for idx, uploaded_file in enumerate(valid_files):
-                        try:
-                            content = fp.read_file(uploaded_file)
-                            result = fp.process_file(content)
-                            results.append((uploaded_file.name, result))
-                        except Exception as e:
-                            st.error(f"Error processing {uploaded_file.name}: {e}")
-                        progress_bar.progress((idx+1)/total_files)
-                st.success("Processing complete")
-                aggregated_df = create_themes_dataframe(results)
-                reduced_df = reduce_matching_quotes(aggregated_df, 3)
-                save_dataframe_to_state(reduced_df, 'processed_results')
+        valid_files = uploaded_files
+        st.write("Uploaded files:")
+        for uploaded_file in valid_files:
+            st.write(uploaded_file.name)
+        st.success("Files uploaded successfully")
+        if st.button("Process Files"):
+            with st.spinner("Processing files..."):
+                results = []
+                total_files = len(valid_files)
+                progress_bar = st.progress(0)
+                for idx, uploaded_file in enumerate(valid_files):
+                    try:
+                        content = fp.read_file(uploaded_file)
+                        result = fp.process_file(content)
+                        results.append((uploaded_file.name, result))
+                    except Exception as e:
+                        st.error(f"Error processing {uploaded_file.name}: {e}")
+                    progress_bar.progress((idx+1)/total_files)
+            st.success("Processing complete")
+            full_df = create_themes_dataframe(results)
+            reduced_df = reduce_matching_quotes(full_df, 3)
+            save_dataframe_to_state(reduced_df, 'processed_results')
+            save_dataframe_to_state(full_df, 'full_results')
 
     # Display processed results if they exist
     reduced_df = get_dataframe_from_state('processed_results')
@@ -63,13 +58,14 @@ def main():
         st.markdown("## Theme Extracted from Raw Data", unsafe_allow_html=True)
         st.dataframe(reduced_df)
         
-        # Add download button for the CSV export
-        csv = reduced_df.to_csv(index=False)
+        # Add download button for the full CSV export
+        full_df = get_dataframe_from_state('full_results')
+        csv = full_df.to_csv(index=False)
         st.download_button(
             label="Download Themes as CSV",
             data=csv,
-            file_name="extracted_themes.csv",
-            mime="text/csv",
+            file_name="full_themes.csv",
+            mime="text/csv"
         )
 
     # Add CSV import section

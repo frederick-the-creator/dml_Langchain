@@ -4,7 +4,7 @@ from src.utils import init_llm
 from src.prompts import prompt_template
 from src.data_model import Data
 from src.input import create_input_list
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 import os
 
 
